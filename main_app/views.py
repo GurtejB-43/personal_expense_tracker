@@ -37,7 +37,7 @@ def home(request):
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
         if form.is_valid():
-            #create new expense record when the form is valid
+            #create new expense record when the form is valid (ORM - insert new expense record)
             form.save()
             
             messages.success(request, 'Expense added successfully!')
@@ -68,10 +68,12 @@ def delete_expense(request, pk):
     return redirect('main_app:home')
 
 def edit_expense(request, pk):
+    #update an existing expense record using the primary key (pk) ORM
     expense = get_object_or_404(Expense, pk=pk)
     if request.method == 'POST':
         form = ExpenseForm(request.POST, instance=expense)
         if form.is_valid():
+            ## Update the existing expense record using the ORM
             form.save()
             messages.success(request, 'Expense updated successfully!')
             return redirect('main_app:home')
@@ -81,14 +83,13 @@ def edit_expense(request, pk):
 
 #return a report of expenses filtered by the user's criteria
 def filtered_report(request):
-    #start with an empty queryset (ORM)
     expenses = Expense.objects.select_related('category').none() 
     stats = {}
-    # Populate the form with GET data if available
+    # Populate the form with GET data if available 
+    # (implicitly accesses the DB using ORM)
     form = ReportFilterForm(request.GET or None) 
 
     if form.is_valid():
-        # Start with all expenses, efficiently fetching related category (ORM)
         queryset = Expense.objects.select_related('category').all()
 
         #get the user's filter criteria
@@ -96,7 +97,7 @@ def filtered_report(request):
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
 
-        # Apply filters conditionally using the ORM
+        # Apply filters conditionally
         if category:
             queryset = queryset.filter(category=category)
         if start_date:
@@ -106,10 +107,11 @@ def filtered_report(request):
             #only show expenses up to and including the end date
             queryset = queryset.filter(date__lte=end_date)  
 
-        # Order the results
+        # Order the results implicitly
         expenses = queryset.order_by('-date')
 
-        # Calculate statistics on the filtered queryset
+        # Calculate statistics on the filtered queryset (filtered report view)
+        # executes a query using the ORM
         stats = expenses.aggregate(
             total_amount=Sum('amount', default=0),
             average_amount=Avg('amount', default=0),
