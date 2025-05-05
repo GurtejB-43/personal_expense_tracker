@@ -1,4 +1,4 @@
-This is a simple expense tracker application I'm building to teach myself Django and SQLite3.
+This is an expense tracker application I'm building to teach myself Django and SQLite3.
 
 ## Features
 - Add, edit, and delete expenses
