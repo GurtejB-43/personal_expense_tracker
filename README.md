@@ -9,8 +9,7 @@ This is an expense tracker application I'm building to teach myself Django and S
 - Django
 - SQLite3
 - HTML
-- CSS
-- JavaScript    
+- some CSS
 
 ## Setup
 1. Clone the repository: git clone https://github.com/GurtejB-43/personal_expense_tracker.git
