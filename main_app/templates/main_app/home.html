@@ -43,7 +43,11 @@ templates\main_app\home.html -->
 </head>
 <body>
     <h1>Expense Tracker</h1>
-    
+
+    <nav style="margin-bottom: 20px;">
+        <a href="{% url 'main_app:report' %}">View Filtered Expense Report</a>
+    </nav>
+
     {% if messages %}
     {% for message in messages %}
     <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
