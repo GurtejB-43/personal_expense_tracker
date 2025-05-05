@@ -51,7 +51,7 @@ def home(request):
     })
 
 def delete_expense(request, pk):
-    #retrieve a single record 
+    #retrieve a single record using the primary key (pk) ORM
     expense = get_object_or_404(Expense, pk=pk)
 
     #delete a single record
@@ -73,14 +73,17 @@ def edit_expense(request, pk):
 
 #return a report of expenses filtered by the user's criteria
 def filtered_report(request):
-    expenses = Expense.objects.select_related('category').none() # Start with an empty queryset
+    #start with an empty queryset (ORM)
+    expenses = Expense.objects.select_related('category').none() 
     stats = {}
-    form = ReportFilterForm(request.GET or None) # Populate with GET data if available
+    # Populate the form with GET data if available
+    form = ReportFilterForm(request.GET or None) 
 
     if form.is_valid():
-        # Start with all expenses, efficiently fetching related category
+        # Start with all expenses, efficiently fetching related category (ORM)
         queryset = Expense.objects.select_related('category').all()
 
+        #get the user's filter criteria
         category = form.cleaned_data.get('category')
         start_date = form.cleaned_data.get('start_date')
         end_date = form.cleaned_data.get('end_date')
@@ -89,9 +92,11 @@ def filtered_report(request):
         if category:
             queryset = queryset.filter(category=category)
         if start_date:
-            queryset = queryset.filter(date__gte=start_date) # gte = greater than or equal
+            #only show expenses from the start date onwards 
+            queryset = queryset.filter(date__gte=start_date) 
         if end_date:
-            queryset = queryset.filter(date__lte=end_date)   # lte = less than or equal
+            #only show expenses up to and including the end date
+            queryset = queryset.filter(date__lte=end_date)  
 
         # Order the results
         expenses = queryset.order_by('-date')
