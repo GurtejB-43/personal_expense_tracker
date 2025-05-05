@@ -13,7 +13,7 @@ This is a simple expense tracker application I'm building to teach myself Django
 - JavaScript    
 
 ## Setup
-1. Clone the repository: git clone https://github.com/GurtejB-43/application_project.git
+1. Clone the repository: git clone https://github.com/GurtejB-43/personal_expense_tracker.git
 2. Install dependencies: pip install -r requirements.txt 
 3. Run the development server: python manage.py runserver
 
