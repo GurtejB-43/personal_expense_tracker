@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import connection, models # Import models
 from django.db.models import Sum, Avg, Count # Import aggregation functions
+from django.http import Http404
 from .models import Expense, Category
 from .forms import ExpenseForm, CategoryForm, ReportFilterForm
 
@@ -51,11 +52,18 @@ def home(request):
     })
 
 def delete_expense(request, pk):
-    #retrieve a single record using the primary key (pk) ORM
-    expense = get_object_or_404(Expense, pk=pk)
+    #we can retrieve a single record using the primary key (pk) ORM
+    #expense = get_object_or_404(Expense, pk=pk)
 
-    #delete a single record
-    expense.delete()
+    # Fetch and delete a single record using a prepared statement (raw SQL)
+    with connection.cursor() as cursor:
+        # Execute DELETE and check if any row was affected
+        cursor.execute("DELETE FROM main_app_expense WHERE id = %s", [pk])
+        # rowcount tells us if a row was actually deleted
+        if cursor.rowcount == 0:
+            # If no rows were deleted, the pk didn't exist, raise 404
+            raise Http404("Expense matching query does not exist.")
+
     messages.success(request, 'Expense deleted successfully!')
     return redirect('main_app:home')
 
