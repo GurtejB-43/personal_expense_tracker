@@ -1,0 +1,91 @@
+templates\main_app\home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .expense-form {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .expense-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .expense-list th, .expense-list td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .expense-list th {
+            background-color: #f0f0f0;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Expense Tracker</h1>
+    
+    {% if messages %}
+    {% for message in messages %}
+    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="expense-form">
+        <h2>Add New Expense</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Expense</button>
+        </form>
+    </div>
+
+    <h2>Expense List</h2>
+    <table class="expense-list">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>${{ expense.amount }}</td>
+                <td>{{ expense.category }}</td>
+                <td>{{ expense.description }}</td>
+                <td>
+                    <a href="{% url 'main_app:edit_expense' expense.id %}">Edit</a> |
+                    <a href="{% url 'main_app:delete_expense' expense.id %}" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
